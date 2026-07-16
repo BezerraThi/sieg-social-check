@@ -1,16 +1,19 @@
 import { useState } from 'react'
+import { ArrowRight } from '@phosphor-icons/react'
 import { REDES } from '../redes'
 import { primaryButtonStyle } from '../App'
 
 export default function PostForm({ onSubmit }) {
   const [texto, setTexto] = useState('')
   const [rede, setRede] = useState(REDES[0].valor)
+  const [incluirEmojis, setIncluirEmojis] = useState(true)
+  const [incluirHashtags, setIncluirHashtags] = useState(true)
 
   function handleSubmit(e) {
     e.preventDefault()
     const textoLimpo = texto.trim()
     if (!textoLimpo) return
-    onSubmit({ texto: textoLimpo, rede })
+    onSubmit({ texto: textoLimpo, rede, incluirEmojis, incluirHashtags })
   }
 
   return (
@@ -19,11 +22,10 @@ export default function PostForm({ onSubmit }) {
       style={{
         background: 'white',
         borderRadius: 'var(--card-radius)',
-        padding: 28,
-        boxShadow: 'var(--shadow-soft)',
+        padding: 32,
       }}
     >
-      <label style={{ display: 'block', textAlign: 'left', fontSize: 14, fontWeight: 600, marginBottom: 8 }}>
+      <label style={{ display: 'block', textAlign: 'left', fontSize: 13, fontWeight: 600, marginBottom: 8, color: 'var(--carvao)' }}>
         Rede social
       </label>
       <select
@@ -31,12 +33,13 @@ export default function PostForm({ onSubmit }) {
         onChange={(e) => setRede(e.target.value)}
         style={{
           width: '100%',
-          padding: '10px 12px',
-          borderRadius: 10,
+          padding: '11px 14px',
+          borderRadius: 12,
           border: '1px solid var(--cinza-claro)',
           fontSize: 15,
-          marginBottom: 20,
-          background: 'white',
+          marginBottom: 22,
+          background: 'var(--off-white)',
+          color: 'var(--carvao)',
         }}
       >
         {REDES.map((r) => (
@@ -46,7 +49,7 @@ export default function PostForm({ onSubmit }) {
         ))}
       </select>
 
-      <label style={{ display: 'block', textAlign: 'left', fontSize: 14, fontWeight: 600, marginBottom: 8 }}>
+      <label style={{ display: 'block', textAlign: 'left', fontSize: 13, fontWeight: 600, marginBottom: 8, color: 'var(--carvao)' }}>
         Texto do post
       </label>
       <textarea
@@ -56,20 +59,44 @@ export default function PostForm({ onSubmit }) {
         rows={8}
         style={{
           width: '100%',
-          padding: 12,
-          borderRadius: 10,
+          padding: 14,
+          borderRadius: 12,
           border: '1px solid var(--cinza-claro)',
           fontSize: 15,
           resize: 'vertical',
           marginBottom: 8,
+          background: 'var(--off-white)',
+          color: 'var(--carvao)',
         }}
       />
-      <p style={{ textAlign: 'right', fontSize: 13, color: 'var(--cinza-medio)', marginBottom: 20 }}>
+      <p style={{ textAlign: 'right', fontSize: 13, color: 'var(--cinza-medio)', marginBottom: 22 }}>
         {texto.length} caracteres
       </p>
 
+      <div style={{ display: 'flex', gap: 24, marginBottom: 22 }}>
+        <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14, color: 'var(--carvao)', cursor: 'pointer' }}>
+          <input
+            type="checkbox"
+            checked={incluirEmojis}
+            onChange={(e) => setIncluirEmojis(e.target.checked)}
+            style={{ width: 16, height: 16, accentColor: 'var(--azul)', cursor: 'pointer' }}
+          />
+          Incluir emojis
+        </label>
+        <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14, color: 'var(--carvao)', cursor: 'pointer' }}>
+          <input
+            type="checkbox"
+            checked={incluirHashtags}
+            onChange={(e) => setIncluirHashtags(e.target.checked)}
+            style={{ width: 16, height: 16, accentColor: 'var(--azul)', cursor: 'pointer' }}
+          />
+          Incluir hashtags
+        </label>
+      </div>
+
       <button type="submit" style={{ ...primaryButtonStyle, width: '100%' }} disabled={!texto.trim()}>
         Analisar texto
+        <ArrowRight size={18} weight="bold" />
       </button>
     </form>
   )

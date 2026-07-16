@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { WarningCircle, CircleNotch } from '@phosphor-icons/react'
 import { analisarTexto, AnaliseError } from './api'
 import PostForm from './components/PostForm'
 import ResultView from './components/ResultView'
@@ -9,12 +10,12 @@ function App() {
   const [erro, setErro] = useState('')
   const [ultimoEnvio, setUltimoEnvio] = useState(null)
 
-  async function handleSubmit({ texto, rede }) {
+  async function handleSubmit({ texto, rede, incluirEmojis, incluirHashtags }) {
     setStatus('carregando')
     setErro('')
-    setUltimoEnvio({ texto, rede })
+    setUltimoEnvio({ texto, rede, incluirEmojis, incluirHashtags })
     try {
-      const dados = await analisarTexto({ texto, rede })
+      const dados = await analisarTexto({ texto, rede, incluirEmojis, incluirHashtags })
       setResultado(dados)
       setStatus('resultado')
     } catch (err) {
@@ -35,56 +36,80 @@ function App() {
 
   return (
     <>
-      <header style={{ marginBottom: 32, textAlign: 'center' }}>
+      <div className="decor-circulo" />
+      <span className="marca-agua">SIEG</span>
+
+      <header style={{ marginBottom: 40, textAlign: 'center', position: 'relative', zIndex: 1 }}>
         <span
           style={{
             display: 'inline-block',
-            padding: '6px 16px',
-            borderRadius: 999,
+            padding: '7px 18px',
+            borderRadius: 'var(--pill-radius)',
             background: 'var(--azul)',
             color: 'white',
             fontSize: 13,
             fontWeight: 600,
-            marginBottom: 16,
+            marginBottom: 20,
           }}
         >
-          SIEG · Social Check
+          <strong style={{ fontWeight: 900 }}>SIEG</strong> · Social Check
         </span>
-        <h1 style={{ fontSize: 32, marginBottom: 8 }}>Revisor de posts</h1>
-        <p style={{ color: 'var(--cinza-medio)', fontSize: 15 }}>
+        <h1 style={{ fontSize: 34, marginBottom: 10 }}>Revisor de posts</h1>
+        <p style={{ color: 'var(--cinza-medio)', fontSize: 15, maxWidth: 420, margin: '0 auto' }}>
           Cole o texto do post antes de publicar: a IA revisa ortografia, estima o engajamento e sugere uma versão alternativa.
         </p>
       </header>
 
-      {status === 'form' && <PostForm onSubmit={handleSubmit} />}
+      <main style={{ position: 'relative', zIndex: 1 }}>
+        {status === 'form' && <PostForm onSubmit={handleSubmit} />}
 
-      {status === 'carregando' && (
-        <div style={cardStyle}>
-          <p style={{ fontWeight: 600 }}>Analisando o texto...</p>
-          <p style={{ color: 'var(--cinza-medio)', fontSize: 14, marginTop: 8 }}>
-            Isso pode levar alguns segundos.
-          </p>
-        </div>
-      )}
-
-      {status === 'erro' && (
-        <div style={{ ...cardStyle, borderLeft: '4px solid var(--erro)' }}>
-          <p style={{ fontWeight: 600, color: 'var(--erro)' }}>Não foi possível analisar o texto</p>
-          <p style={{ color: 'var(--cinza-medio)', fontSize: 14, marginTop: 8 }}>{erro}</p>
-          <div style={{ display: 'flex', gap: 12, marginTop: 20 }}>
-            <button type="button" style={primaryButtonStyle} onClick={handleTentarNovamente}>
-              Tentar de novo
-            </button>
-            <button type="button" style={secondaryButtonStyle} onClick={handleNovaAnalise}>
-              Editar texto
-            </button>
+        {status === 'carregando' && (
+          <div style={cardStyle}>
+            <CircleNotch size={36} weight="bold" color="var(--azul)" className="spinner" style={{ marginBottom: 16 }} />
+            <p style={{ fontWeight: 700 }}>Analisando seu texto e gerando seu índice de engajamento...</p>
+            <p style={{ color: 'var(--cinza-medio)', fontSize: 14, marginTop: 8 }}>
+              Isso pode levar alguns segundos.
+            </p>
           </div>
-        </div>
-      )}
+        )}
 
-      {status === 'resultado' && resultado && (
-        <ResultView resultado={resultado} onNovaAnalise={handleNovaAnalise} />
-      )}
+        {status === 'erro' && (
+          <div style={cardStyle}>
+            <WarningCircle size={32} color="var(--erro)" weight="regular" style={{ marginBottom: 12 }} />
+            <p style={{ fontWeight: 700 }}>Não foi possível analisar o texto</p>
+            <p style={{ color: 'var(--cinza-medio)', fontSize: 14, marginTop: 8 }}>Erro: {erro}</p>
+            <p style={{ color: 'var(--cinza-medio)', fontSize: 13, marginTop: 12, background: 'var(--off-white)', borderRadius: 10, padding: '10px 14px' }}>
+              Se o erro continuar acontecendo, chame o suporte e informe a mensagem acima.
+            </p>
+            <div style={{ display: 'flex', gap: 12, marginTop: 20, justifyContent: 'center' }}>
+              <button type="button" style={primaryButtonStyle} onClick={handleTentarNovamente}>
+                Tentar de novo
+              </button>
+              <button type="button" style={secondaryButtonStyle} onClick={handleNovaAnalise}>
+                Editar texto
+              </button>
+            </div>
+          </div>
+        )}
+
+        {status === 'resultado' && resultado && (
+          <ResultView resultado={resultado} onNovaAnalise={handleNovaAnalise} />
+        )}
+      </main>
+
+      <footer
+        style={{
+          marginTop: 56,
+          paddingTop: 20,
+          borderTop: '1px solid var(--cinza-claro)',
+          fontSize: 12,
+          color: 'var(--cinza-medio)',
+          position: 'relative',
+          zIndex: 1,
+        }}
+      >
+        <span>SIEG · Institucional</span>
+      </footer>
     </>
   )
 }
@@ -92,8 +117,7 @@ function App() {
 const cardStyle = {
   background: 'white',
   borderRadius: 'var(--card-radius)',
-  padding: 28,
-  boxShadow: 'var(--shadow-soft)',
+  padding: 32,
   textAlign: 'center',
 }
 
@@ -101,19 +125,23 @@ export const primaryButtonStyle = {
   background: 'var(--azul)',
   color: 'white',
   border: 'none',
-  borderRadius: 999,
-  padding: '12px 24px',
+  borderRadius: 'var(--pill-radius)',
+  padding: '13px 26px',
   fontSize: 15,
   fontWeight: 600,
   cursor: 'pointer',
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: 8,
 }
 
 export const secondaryButtonStyle = {
   background: 'transparent',
   color: 'var(--carvao)',
   border: '1px solid var(--cinza-claro)',
-  borderRadius: 999,
-  padding: '12px 24px',
+  borderRadius: 'var(--pill-radius)',
+  padding: '13px 26px',
   fontSize: 15,
   fontWeight: 600,
   cursor: 'pointer',

@@ -2,7 +2,7 @@ const WEBHOOK_URL = import.meta.env.VITE_N8N_WEBHOOK_URL
 
 export class AnaliseError extends Error {}
 
-export async function analisarTexto({ texto, rede }) {
+export async function analisarTexto({ texto, rede, incluirEmojis, incluirHashtags }) {
   if (!WEBHOOK_URL) {
     throw new AnaliseError(
       'Webhook do n8n não configurado. Defina VITE_N8N_WEBHOOK_URL no .env.'
@@ -14,7 +14,7 @@ export async function analisarTexto({ texto, rede }) {
     response = await fetch(WEBHOOK_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ texto, rede }),
+      body: JSON.stringify({ texto, rede, incluirEmojis, incluirHashtags }),
     })
   } catch {
     throw new AnaliseError('Não foi possível conectar ao serviço de análise. Tente novamente.')

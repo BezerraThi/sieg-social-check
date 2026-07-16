@@ -1,19 +1,27 @@
 :root {
+  /* Paleta Institucional — marca-sieg/design-guide.md */
   --azul: #0052e0;
   --azul-medio: #2b7df5;
   --ciano: #29abe2;
+  --periwinkle: #7bb3e8;
+  --marinho-escuro: #1a2d50;
   --off-white: #f5f6f8;
   --cinza-claro: #c0c8d2;
   --cinza-medio: #7a8896;
   --carvao: #252d36;
   --branco: #ffffff;
 
-  --ok: #1f9d55;
-  --alerta: #b9770e;
+  /* Uso funcional só pra marcar erro de ortografia com clareza — exceção deliberada à paleta */
   --erro: #d1373f;
 
-  --card-radius: 20px;
-  --shadow-soft: 0 8px 24px rgba(37, 45, 54, 0.06);
+  /* Escala de leitura rápida dos índices — do mais fraco ao mais forte */
+  --tier-baixo: #d1373f;
+  --tier-medio: #e0900f;
+  --tier-bom: #2b9e6f;
+  --tier-otimo: #1f9d55;
+
+  --card-radius: 22px;
+  --pill-radius: 999px;
 
   font-family: 'Figtree', system-ui, sans-serif;
   color: var(--carvao);
@@ -28,18 +36,21 @@
 body {
   margin: 0;
   min-height: 100svh;
+  overflow-x: hidden;
 }
 
 #root {
   max-width: 760px;
   margin: 0 auto;
-  padding: 40px 20px 80px;
+  padding: 48px 20px 80px;
+  position: relative;
 }
 
 h1, h2, h3 {
   font-weight: 900;
   margin: 0;
   color: var(--carvao);
+  letter-spacing: -0.01em;
 }
 
 p {
@@ -50,6 +61,50 @@ button {
   font-family: inherit;
 }
 
-textarea, select {
+textarea, select, input {
   font-family: inherit;
+}
+
+/* Elemento decorativo — círculo suave cortado pela borda, conforme guia de marca */
+.decor-circulo {
+  position: absolute;
+  top: -140px;
+  right: -160px;
+  width: 380px;
+  height: 380px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, var(--periwinkle) 0%, transparent 70%);
+  opacity: 0.35;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.marca-agua {
+  position: absolute;
+  top: 24px;
+  right: -8px;
+  font-family: 'Figtree', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  color: var(--cinza-claro);
+  transform: rotate(90deg);
+  transform-origin: right top;
+  pointer-events: none;
+  user-select: none;
+}
+
+@keyframes girar {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.spinner {
+  animation: girar 0.9s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation-duration: 2.4s;
+  }
 }

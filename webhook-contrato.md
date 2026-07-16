@@ -7,11 +7,15 @@ O frontend faz um `POST` pra URL do webhook configurada em `VITE_N8N_WEBHOOK_URL
 ```json
 {
   "texto": "Texto do post que vai ser publicado",
-  "rede": "instagram"
+  "rede": "instagram",
+  "incluirEmojis": true,
+  "incluirHashtags": true
 }
 ```
 
 `rede` é sempre um destes valores: `instagram`, `linkedin`, `tiktok`, `facebook`, `youtube`, `blog`.
+
+`incluirEmojis` e `incluirHashtags`: booleanos marcados pelo usuário no formulário — controlam se o `textoAlternativo` (Tarefa 3 do prompt) pode usar emojis/hashtags ou não, independente do que o tom da rede normalmente sugeriria.
 
 ## Response (o n8n devolve)
 
@@ -25,7 +29,8 @@ O frontend faz um `POST` pra URL do webhook configurada em `VITE_N8N_WEBHOOK_URL
         "sugestao": "empresa preocupada",
         "tipo": "ortografia"
       }
-    ]
+    ],
+    "textoCorrigido": "Texto original com só as correções de ortografia/gramática aplicadas — mesma mensagem, mesmo tom, só sem os erros"
   },
   "engajamento": {
     "nota": 72,
@@ -63,6 +68,7 @@ O frontend faz um `POST` pra URL do webhook configurada em `VITE_N8N_WEBHOOK_URL
 
 ### Regras de tipo
 - `ortografia.erros` pode ser um array vazio quando `temErros` é `false`.
+- `ortografia.textoCorrigido`: sempre presente, mesmo quando `temErros` é `false` (nesse caso, é igual ao texto original) — é o texto pronto pra copiar, com a mensagem e o tom preservados, só sem erros.
 - `engajamento.nota` e cada `criterios[].nota`: inteiro de 0 a 100.
 - `engajamento.classificacao`: um destes — `Baixo`, `Médio`, `Bom`, `Ótimo`.
 - Todos os campos de texto em português.
