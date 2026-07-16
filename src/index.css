@@ -1,0 +1,55 @@
+:root {
+  --azul: #0052e0;
+  --azul-medio: #2b7df5;
+  --ciano: #29abe2;
+  --off-white: #f5f6f8;
+  --cinza-claro: #c0c8d2;
+  --cinza-medio: #7a8896;
+  --carvao: #252d36;
+  --branco: #ffffff;
+
+  --ok: #1f9d55;
+  --alerta: #b9770e;
+  --erro: #d1373f;
+
+  --card-radius: 20px;
+  --shadow-soft: 0 8px 24px rgba(37, 45, 54, 0.06);
+
+  font-family: 'Figtree', system-ui, sans-serif;
+  color: var(--carvao);
+  background: var(--off-white);
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100svh;
+}
+
+#root {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 40px 20px 80px;
+}
+
+h1, h2, h3 {
+  font-weight: 900;
+  margin: 0;
+  color: var(--carvao);
+}
+
+p {
+  margin: 0;
+}
+
+button {
+  font-family: inherit;
+}
+
+textarea, select {
+  font-family: inherit;
+}
