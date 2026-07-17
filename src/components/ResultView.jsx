@@ -124,7 +124,7 @@ function SecaoOrtografia({ ortografia, rotulo }) {
 
   return (
     <section style={cardStyle}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: semErros ? 4 : 16 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: semErros ? 12 : 16 }}>
         {semErros ? (
           <CheckCircle size={22} weight="fill" color="var(--azul)" />
         ) : (
@@ -134,28 +134,28 @@ function SecaoOrtografia({ ortografia, rotulo }) {
       </div>
 
       {semErros ? (
-        <p style={{ color: 'var(--cinza-medio)', fontSize: 14, marginLeft: 32 }}>Nenhum erro encontrado.</p>
+        <p style={{ color: 'var(--cinza-medio)', fontSize: 14, marginLeft: 32, marginBottom: ortografia.textoCorrigido ? 20 : 0 }}>
+          Nenhum erro encontrado.
+        </p>
       ) : (
-        <>
-          <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 10, marginBottom: ortografia.textoCorrigido ? 20 : 0 }}>
-            {ortografia.erros.map((erro, i) => (
-              <li key={i} style={{ fontSize: 14, background: 'var(--off-white)', borderRadius: 10, padding: '10px 14px' }}>
-                <span style={{ textDecoration: 'line-through', color: 'var(--erro)', fontWeight: 600 }}>{erro.trecho}</span>
-                {' → '}
-                <span style={{ color: 'var(--carvao)', fontWeight: 700 }}>{erro.sugestao}</span>
-                <span style={{ color: 'var(--cinza-medio)' }}> ({erro.tipo})</span>
-              </li>
-            ))}
-          </ul>
-
-          {ortografia.textoCorrigido && <TextoCorrigido texto={ortografia.textoCorrigido} />}
-        </>
+        <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 20 }}>
+          {ortografia.erros.map((erro, i) => (
+            <li key={i} style={{ fontSize: 14, background: 'var(--off-white)', borderRadius: 10, padding: '10px 14px' }}>
+              <span style={{ textDecoration: 'line-through', color: 'var(--erro)', fontWeight: 600 }}>{erro.trecho}</span>
+              {' → '}
+              <span style={{ color: 'var(--carvao)', fontWeight: 700 }}>{erro.sugestao}</span>
+              <span style={{ color: 'var(--cinza-medio)' }}> ({erro.tipo})</span>
+            </li>
+          ))}
+        </ul>
       )}
+
+      {ortografia.textoCorrigido && <TextoCorrigido texto={ortografia.textoCorrigido} semErros={semErros} />}
     </section>
   )
 }
 
-function TextoCorrigido({ texto }) {
+function TextoCorrigido({ texto, semErros }) {
   const [copiado, setCopiado] = useState(false)
 
   async function handleCopiar() {
@@ -170,7 +170,9 @@ function TextoCorrigido({ texto }) {
 
   return (
     <div>
-      <p style={{ fontSize: 13, fontWeight: 700, marginBottom: 8, color: 'var(--carvao)' }}>Seu texto já corrigido</p>
+      <p style={{ fontSize: 13, fontWeight: 700, marginBottom: 8, color: 'var(--carvao)' }}>
+        {semErros ? 'Seu texto' : 'Seu texto já corrigido'}
+      </p>
       <p style={{ fontSize: 15, whiteSpace: 'pre-wrap', background: 'var(--off-white)', borderRadius: 12, padding: 16, color: 'var(--carvao)' }}>
         {texto}
       </p>
