@@ -1,6 +1,6 @@
 # Guia: montar o workflow no n8n
 
-O site (hospedado na Vercel) chama o webhook direto do navegador. Por isso o node **Webhook** do n8n precisa responder com o header `Access-Control-Allow-Origin` liberado (ou pelo menos pro domínio da Vercel) — sem isso o navegador bloqueia a resposta (CORS).
+> **Atualização de arquitetura:** o navegador não chama mais o n8n direto — ele chama uma função serverless da Vercel (`api/analisar.js`), que repassa a chamada pro n8n. Isso significa que **não precisa mais configurar CORS** no node Webhook (a chamada agora é servidor-a-servidor, fora do alcance da política de CORS do navegador). Se você já tinha configurado `Access-Control-Allow-Origin` antes, pode deixar como está (não atrapalha) ou remover.
 
 ## Estrutura do workflow
 
@@ -11,9 +11,8 @@ O site (hospedado na Vercel) chama o webhook direto do navegador. Por isso o nod
 ### 1. Node "Webhook"
 - Método: `POST`
 - Path: livre (ex: `sieg-social-check`)
-- Em **Options → Response Headers**, adicionar:
-  - `Access-Control-Allow-Origin: *` (ou o domínio exato da Vercel, ex: `https://sieg-social-check.vercel.app`)
 - Ativar **"Respond"** = `Using 'Respond to Webhook' node` (assim dá pra controlar o retorno depois do AI node)
+- **Opcional, recomendado**: em **Authentication**, escolha `Header Auth` e crie uma credencial com um nome de header (ex: `X-Webhook-Secret`) e um valor secreto à sua escolha. Coloque esse mesmo valor na variável `N8N_SECRET` do projeto na Vercel — assim só a sua função serverless consegue chamar o webhook, mesmo que alguém descubra a URL.
 
 ### 2. Node de IA (Google Gemini Chat Model)
 

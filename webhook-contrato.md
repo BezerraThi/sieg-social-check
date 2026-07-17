@@ -1,6 +1,6 @@
 # Contrato do Webhook (n8n)
 
-O frontend faz um `POST` pra URL do webhook configurada em `VITE_N8N_WEBHOOK_URL` (ver `.env.example`).
+O navegador faz um `POST` pra `/api/analisar` (função serverless da Vercel, ver `api/analisar.js`). Essa função repassa a chamada pro webhook do n8n configurado em `N8N_WEBHOOK_URL` (variável só de servidor, ver `.env.example`) — o navegador nunca vê a URL real do n8n.
 
 ## Request (o site envia)
 
