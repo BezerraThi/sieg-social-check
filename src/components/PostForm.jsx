@@ -1,24 +1,21 @@
-import { useState } from 'react'
 import { ArrowRight } from '@phosphor-icons/react'
 import { REDES } from '../redes'
 import { primaryButtonStyle } from '../App'
 
-export default function PostForm({ onSubmit }) {
-  const [texto, setTexto] = useState('')
-  const [rede, setRede] = useState(REDES[0].valor)
-  const [incluirEmojis, setIncluirEmojis] = useState(true)
-  const [incluirHashtags, setIncluirHashtags] = useState(true)
-
-  function handleSubmit(e) {
-    e.preventDefault()
-    const textoLimpo = texto.trim()
-    if (!textoLimpo) return
-    onSubmit({ texto: textoLimpo, rede, incluirEmojis, incluirHashtags })
-  }
-
+export default function PostForm({
+  texto,
+  setTexto,
+  rede,
+  setRede,
+  incluirEmojis,
+  setIncluirEmojis,
+  incluirHashtags,
+  setIncluirHashtags,
+  onSubmit,
+}) {
   return (
     <form
-      onSubmit={handleSubmit}
+      onSubmit={onSubmit}
       style={{
         background: 'white',
         borderRadius: 'var(--card-radius)',

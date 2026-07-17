@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { WarningCircle, CircleNotch } from '@phosphor-icons/react'
 import { analisarTexto, AnaliseError } from './api'
+import { REDES } from './redes'
 import PostForm from './components/PostForm'
 import ResultView from './components/ResultView'
 
@@ -8,24 +9,29 @@ function App() {
   const [status, setStatus] = useState('form') // form | carregando | resultado | erro
   const [resultado, setResultado] = useState(null)
   const [erro, setErro] = useState('')
-  const [ultimoEnvio, setUltimoEnvio] = useState(null)
 
-  async function handleSubmit({ texto, rede, incluirEmojis, incluirHashtags }) {
+  // Estado do formulário mora aqui (não dentro do PostForm) pra sobreviver
+  // quando a tela muda pra "carregando"/"erro" e volta — o texto não se perde.
+  const [texto, setTexto] = useState('')
+  const [rede, setRede] = useState(REDES[0].valor)
+  const [incluirEmojis, setIncluirEmojis] = useState(true)
+  const [incluirHashtags, setIncluirHashtags] = useState(true)
+
+  async function handleSubmit(e) {
+    e?.preventDefault()
+    const textoLimpo = texto.trim()
+    if (!textoLimpo) return
+
     setStatus('carregando')
     setErro('')
-    setUltimoEnvio({ texto, rede, incluirEmojis, incluirHashtags })
     try {
-      const dados = await analisarTexto({ texto, rede, incluirEmojis, incluirHashtags })
+      const dados = await analisarTexto({ texto: textoLimpo, rede, incluirEmojis, incluirHashtags })
       setResultado(dados)
       setStatus('resultado')
     } catch (err) {
       setErro(err instanceof AnaliseError ? err.message : 'Algo deu errado. Tente novamente.')
       setStatus('erro')
     }
-  }
-
-  function handleTentarNovamente() {
-    if (ultimoEnvio) handleSubmit(ultimoEnvio)
   }
 
   function handleNovaAnalise() {
@@ -61,7 +67,19 @@ function App() {
       </header>
 
       <main style={{ position: 'relative', zIndex: 1 }}>
-        {status === 'form' && <PostForm onSubmit={handleSubmit} />}
+        {status === 'form' && (
+          <PostForm
+            texto={texto}
+            setTexto={setTexto}
+            rede={rede}
+            setRede={setRede}
+            incluirEmojis={incluirEmojis}
+            setIncluirEmojis={setIncluirEmojis}
+            incluirHashtags={incluirHashtags}
+            setIncluirHashtags={setIncluirHashtags}
+            onSubmit={handleSubmit}
+          />
+        )}
 
         {status === 'carregando' && (
           <div style={cardStyle}>
@@ -82,7 +100,7 @@ function App() {
               Se o erro continuar acontecendo, chame o suporte e informe a mensagem acima.
             </p>
             <div style={{ display: 'flex', gap: 12, marginTop: 20, justifyContent: 'center' }}>
-              <button type="button" style={primaryButtonStyle} onClick={handleTentarNovamente}>
+              <button type="button" style={primaryButtonStyle} onClick={handleSubmit}>
                 Tentar de novo
               </button>
               <button type="button" style={secondaryButtonStyle} onClick={handleNovaAnalise}>
