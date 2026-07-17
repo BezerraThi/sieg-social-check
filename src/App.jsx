@@ -99,7 +99,7 @@ function App() {
         {status === 'carregando' && (
           <div style={cardStyle}>
             <CircleNotch size={36} weight="bold" color="var(--azul)" className="spinner" style={{ marginBottom: 16 }} />
-            <p style={{ fontWeight: 700 }}>Analisando seu texto e gerando seu índice de engajamento...</p>
+            <p style={{ fontWeight: 700 }}>{mensagemCarregando(texto, imagem)}</p>
             <p style={{ color: 'var(--cinza-medio)', fontSize: 14, marginTop: 8 }}>
               Isso pode levar alguns segundos.
             </p>
@@ -150,6 +150,13 @@ function App() {
       </footer>
     </>
   )
+}
+
+function mensagemCarregando(texto, imagem) {
+  const temTexto = !!texto.trim()
+  if (temTexto && imagem) return 'Analisando seu texto e sua imagem, e gerando seu índice de engajamento...'
+  if (imagem) return 'Analisando sua imagem e gerando seu índice de engajamento...'
+  return 'Analisando seu texto e gerando seu índice de engajamento...'
 }
 
 const cardStyle = {
