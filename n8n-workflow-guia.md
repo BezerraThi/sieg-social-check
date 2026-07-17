@@ -135,10 +135,39 @@ Incluir emojis: {{ $json.body.incluirEmojis ? "sim" : "não" }}
 Incluir hashtags: {{ $json.body.incluirHashtags ? "sim" : "não" }}
 ```
 
-### 3. Node "Respond to Webhook"
+### 3. Node "Code" (entre o node de IA e o "Respond to Webhook")
+A IA às vezes devolve o JSON com markdown ao redor (` ```json `), dentro de um array `[...]`, ou — se algo no prompt confundir o modelo — com algum texto solto antes/depois do JSON. Esse node limpa tudo isso antes de responder:
+
+```js
+const item = $input.first().json;
+const parts = item.content?.parts || [];
+
+// pega a parte que NÃO é "pensamento" (thought)
+const resposta = parts.find(p => !p.thought) || parts[parts.length - 1];
+
+let texto = resposta.text.replace(/```json\s*|```/g, '').trim();
+
+// extrai só o JSON, ignorando qualquer texto solto antes/depois que a IA às vezes adiciona
+const inicio = texto.search(/[[{]/);
+const fimChave = texto.lastIndexOf('}');
+const fimColchete = texto.lastIndexOf(']');
+const fim = Math.max(fimChave, fimColchete);
+if (inicio !== -1 && fim !== -1) {
+  texto = texto.slice(inicio, fim + 1);
+}
+
+let dados = JSON.parse(texto);
+
+// se vier dentro de um array, pega o primeiro item
+if (Array.isArray(dados)) dados = dados[0];
+
+return [{ json: dados }];
+```
+
+### 4. Node "Respond to Webhook"
 - Respond With: `JSON`
-- Body: a saída do node de IA (o JSON puro — se o node de IA devolver como string, use um node **Code** simples antes pra fazer `JSON.parse()` e garantir que é objeto válido antes de responder)
-- Não esqueça de repetir o header `Access-Control-Allow-Origin` aqui também, se o n8n não herdar do node anterior
+- Body: `{{ $json }}` (em modo expressão) — a saída já limpa do node Code
+- Não esqueça de repetir o header `Access-Control-Allow-Origin` aqui também, se o n8n não herdar do node anterior (opcional, ver nota de arquitetura no topo do arquivo)
 
 ## Testando
 Depois de montar, teste com `curl` antes de plugar no site:
