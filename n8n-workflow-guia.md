@@ -295,6 +295,8 @@ A IA às vezes devolve o JSON com markdown ao redor (` ```json `), dentro de um 
 
 O node "Message a Model" (caminho de texto) e o node "Analyze Image" (caminho de imagem) podem devolver formatos ligeiramente diferentes — por isso a extração de texto abaixo tenta alguns formatos conhecidos. **Se o parsing falhar** depois de ligar o caminho de imagem, rode o node manualmente, veja o JSON bruto que o "Analyze Image" devolveu e me mostre — eu ajusto a função `extrairTexto` pro formato real.
 
+Esse node também normaliza as chaves do JSON removendo acentos — a IA às vezes "corrige" a ortografia de uma chave (ex: devolve `"sugestão"` em vez de `"sugestao"`, ou `"critérios"` em vez de `"criterios"`), mesmo o prompt pedindo explicitamente sem acento. Em vez de depender só do prompt (não é 100% confiável), a função `normalizarChaves` corrige isso automaticamente depois do parse.
+
 ```js
 const item = $input.first().json;
 
@@ -314,6 +316,21 @@ function extrairTexto(item) {
   throw new Error('Formato de resposta da IA não reconhecido: ' + JSON.stringify(item).slice(0, 500));
 }
 
+// remove acentos só das CHAVES do objeto (nunca dos valores) — corrige a IA
+// devolvendo "sugestão"/"critérios"/"acentuação" em vez de "sugestao"/"criterios"/"acentuacao"
+function normalizarChaves(valor) {
+  if (Array.isArray(valor)) return valor.map(normalizarChaves);
+  if (valor && typeof valor === 'object') {
+    const novo = {};
+    for (const [chave, v] of Object.entries(valor)) {
+      const chaveSemAcento = chave.normalize('NFD').replace(new RegExp('[\\u0300-\\u036f]', 'g'), '');
+      novo[chaveSemAcento] = normalizarChaves(v);
+    }
+    return novo;
+  }
+  return valor;
+}
+
 let texto = extrairTexto(item).replace(/```json\s*|```/g, '').trim();
 
 // extrai só o JSON, ignorando qualquer texto solto antes/depois que a IA às vezes adiciona
@@ -329,6 +346,8 @@ let dados = JSON.parse(texto);
 
 // se vier dentro de um array, pega o primeiro item
 if (Array.isArray(dados)) dados = dados[0];
+
+dados = normalizarChaves(dados);
 
 return [{ json: dados }];
 ```
