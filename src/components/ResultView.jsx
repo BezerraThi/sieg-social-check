@@ -40,9 +40,9 @@ export default function ResultView({ resultado, textoOriginalVazio, imagemEnviad
   return (
     <div>
       {imagemEnviada && <SecaoImagemAnalisada imagem={imagemEnviada} analiseImagem={analiseImagem} />}
-      <SecaoOrtografia ortografia={ortografia} imagemEnviada={!!imagemEnviada} />
+      <SecaoOrtografia ortografia={ortografia} rotulo={imagemEnviada ? 'Ortografia e gramática do texto do post' : 'Ortografia e gramática'} />
       <SecaoEngajamento engajamento={engajamento} cor={corNota} />
-      <SecaoTextoAlternativo textoAlternativo={textoAlternativo} ehLegendaNova={textoOriginalVazio} />
+      <SecaoTextoAlternativo textoAlternativo={textoAlternativo} ehLegendaNova={textoOriginalVazio} imagemEnviada={!!imagemEnviada} />
 
       <div style={{ textAlign: 'center', marginTop: 8 }}>
         <button type="button" style={secondaryButtonStyle} onClick={onNovaAnalise}>
@@ -54,13 +54,16 @@ export default function ResultView({ resultado, textoOriginalVazio, imagemEnviad
 }
 
 function SecaoImagemAnalisada({ imagem, analiseImagem }) {
+  const ortografiaImagem = analiseImagem?.ortografia
+  const temErrosNaImagem = ortografiaImagem?.temErros && ortografiaImagem.erros?.length > 0
+
   return (
     <section style={cardStyle}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
         <ImageIcon size={22} weight="fill" color="var(--azul)" />
         <h3 style={{ fontSize: 17 }}>Imagem analisada</h3>
       </div>
-      <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
+      <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start', marginBottom: ortografiaImagem ? 20 : 0 }}>
         <img
           src={imagem}
           alt="Imagem enviada para análise"
@@ -70,13 +73,54 @@ function SecaoImagemAnalisada({ imagem, analiseImagem }) {
           {analiseImagem?.resumo || 'A IA levou o conteúdo dessa imagem em conta na análise de engajamento e na sugestão acima.'}
         </p>
       </div>
+
+      {ortografiaImagem && (
+        <div style={{ borderTop: '1px solid var(--cinza-claro)', paddingTop: 16 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: temErrosNaImagem ? 12 : 4 }}>
+            {temErrosNaImagem ? (
+              <WarningCircle size={19} weight="fill" color="var(--erro)" />
+            ) : (
+              <CheckCircle size={19} weight="fill" color="var(--azul)" />
+            )}
+            <h4 style={{ fontSize: 14, fontWeight: 700, color: 'var(--carvao)' }}>Ortografia do texto na imagem</h4>
+          </div>
+
+          {temErrosNaImagem ? (
+            <>
+              <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 10, marginBottom: ortografiaImagem.sugestaoTexto ? 16 : 0 }}>
+                {ortografiaImagem.erros.map((erro, i) => (
+                  <li key={i} style={{ fontSize: 14, background: 'var(--off-white)', borderRadius: 10, padding: '10px 14px' }}>
+                    <span style={{ textDecoration: 'line-through', color: 'var(--erro)', fontWeight: 600 }}>{erro.trecho}</span>
+                    {' → '}
+                    <span style={{ color: 'var(--carvao)', fontWeight: 700 }}>{erro.sugestao}</span>
+                    <span style={{ color: 'var(--cinza-medio)' }}> ({erro.tipo})</span>
+                  </li>
+                ))}
+              </ul>
+              <p style={{ fontSize: 12.5, color: 'var(--cinza-medio)', marginBottom: ortografiaImagem.sugestaoTexto ? 12 : 0 }}>
+                Esses erros estão na própria arte — corrija direto no arquivo de design, não dá pra editar por aqui.
+              </p>
+            </>
+          ) : (
+            <p style={{ color: 'var(--cinza-medio)', fontSize: 14, marginLeft: 29 }}>Nenhum erro encontrado no texto da imagem.</p>
+          )}
+
+          {ortografiaImagem.sugestaoTexto && (
+            <div style={{ marginTop: 8 }}>
+              <p style={{ fontSize: 13, fontWeight: 700, marginBottom: 8, color: 'var(--carvao)' }}>Sugestão de texto para a imagem</p>
+              <p style={{ fontSize: 14, whiteSpace: 'pre-wrap', background: 'var(--off-white)', borderRadius: 12, padding: 14, color: 'var(--carvao)' }}>
+                {ortografiaImagem.sugestaoTexto}
+              </p>
+            </div>
+          )}
+        </div>
+      )}
     </section>
   )
 }
 
-function SecaoOrtografia({ ortografia, imagemEnviada }) {
+function SecaoOrtografia({ ortografia, rotulo }) {
   const semErros = !ortografia.temErros || ortografia.erros.length === 0
-  const temErroNaImagem = imagemEnviada && ortografia.erros.some((erro) => erro.origem === 'imagem')
 
   return (
     <section style={cardStyle}>
@@ -86,47 +130,23 @@ function SecaoOrtografia({ ortografia, imagemEnviada }) {
         ) : (
           <WarningCircle size={22} weight="fill" color="var(--erro)" />
         )}
-        <h3 style={{ fontSize: 17 }}>Ortografia e gramática</h3>
+        <h3 style={{ fontSize: 17 }}>{rotulo}</h3>
       </div>
 
       {semErros ? (
         <p style={{ color: 'var(--cinza-medio)', fontSize: 14, marginLeft: 32 }}>Nenhum erro encontrado.</p>
       ) : (
         <>
-          <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 12 }}>
+          <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 10, marginBottom: ortografia.textoCorrigido ? 20 : 0 }}>
             {ortografia.erros.map((erro, i) => (
               <li key={i} style={{ fontSize: 14, background: 'var(--off-white)', borderRadius: 10, padding: '10px 14px' }}>
-                {imagemEnviada && (
-                  <span
-                    style={{
-                      display: 'inline-block',
-                      fontSize: 11,
-                      fontWeight: 700,
-                      padding: '2px 9px',
-                      borderRadius: 'var(--pill-radius)',
-                      marginBottom: 6,
-                      background: erro.origem === 'imagem' ? 'var(--periwinkle)' : 'var(--azul)',
-                      color: 'white',
-                    }}
-                  >
-                    {erro.origem === 'imagem' ? 'Na imagem' : 'Na legenda'}
-                  </span>
-                )}
-                <div>
-                  <span style={{ textDecoration: 'line-through', color: 'var(--erro)', fontWeight: 600 }}>{erro.trecho}</span>
-                  {' → '}
-                  <span style={{ color: 'var(--carvao)', fontWeight: 700 }}>{erro.sugestao}</span>
-                  <span style={{ color: 'var(--cinza-medio)' }}> ({erro.tipo})</span>
-                </div>
+                <span style={{ textDecoration: 'line-through', color: 'var(--erro)', fontWeight: 600 }}>{erro.trecho}</span>
+                {' → '}
+                <span style={{ color: 'var(--carvao)', fontWeight: 700 }}>{erro.sugestao}</span>
+                <span style={{ color: 'var(--cinza-medio)' }}> ({erro.tipo})</span>
               </li>
             ))}
           </ul>
-
-          {temErroNaImagem && (
-            <p style={{ fontSize: 12.5, color: 'var(--cinza-medio)', marginBottom: ortografia.textoCorrigido ? 20 : 0 }}>
-              Os erros marcados "Na imagem" estão na própria arte, não na legenda — corrija direto na imagem (o texto corrigido abaixo, se houver, contém só a legenda).
-            </p>
-          )}
 
           {ortografia.textoCorrigido && <TextoCorrigido texto={ortografia.textoCorrigido} />}
         </>
@@ -191,7 +211,7 @@ function SecaoEngajamento({ engajamento, cor }) {
           color: 'white',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: 16 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           <span style={{ fontFamily: 'Figtree', fontWeight: 900, fontSize: 56, lineHeight: 1 }}>
             {engajamento.nota}
           </span>
@@ -280,7 +300,13 @@ function SecaoEngajamento({ engajamento, cor }) {
   )
 }
 
-function SecaoTextoAlternativo({ textoAlternativo, ehLegendaNova }) {
+function rotuloTextoAlternativo(ehLegendaNova, imagemEnviada) {
+  if (ehLegendaNova) return 'Sugestão de legenda para a imagem'
+  if (imagemEnviada) return 'Sugestão de legenda para o post'
+  return 'Sugestão de texto alternativo'
+}
+
+function SecaoTextoAlternativo({ textoAlternativo, ehLegendaNova, imagemEnviada }) {
   const [copiado, setCopiado] = useState(false)
 
   async function handleCopiar() {
@@ -295,10 +321,13 @@ function SecaoTextoAlternativo({ textoAlternativo, ehLegendaNova }) {
 
   return (
     <section style={cardStyle}>
-      <h3 style={{ fontSize: 17, marginBottom: 14 }}>
-        {ehLegendaNova ? 'Sugestão de legenda para a imagem' : 'Sugestão de texto alternativo'}
-      </h3>
-      <p style={{ fontSize: 15, whiteSpace: 'pre-wrap', background: 'var(--off-white)', borderRadius: 12, padding: 16, color: 'var(--carvao)' }}>
+      <h3 style={{ fontSize: 17, marginBottom: 4 }}>{rotuloTextoAlternativo(ehLegendaNova, imagemEnviada)}</h3>
+      {imagemEnviada && !ehLegendaNova && (
+        <p style={{ fontSize: 12.5, color: 'var(--cinza-medio)', marginBottom: 10 }}>
+          Isso é sobre o texto do post (a legenda) — não altera a imagem em si.
+        </p>
+      )}
+      <p style={{ fontSize: 15, whiteSpace: 'pre-wrap', background: 'var(--off-white)', borderRadius: 12, padding: 16, color: 'var(--carvao)', marginTop: imagemEnviada && !ehLegendaNova ? 0 : 10 }}>
         {textoAlternativo.sugestao}
       </p>
       <p style={{ fontSize: 13, color: 'var(--cinza-medio)', marginTop: 10 }}>{textoAlternativo.motivo}</p>

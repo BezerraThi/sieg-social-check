@@ -217,10 +217,9 @@ Hashtags institucionais (use só se fizer sentido, não force): #SIEG #Contabili
 
 Emojis aprovados (use com moderação, só se combinar com o tom da rede): 😀😂😅😎😉💙💜 🫰👏🤞👀 ✅📊📈💡🔍📚💸🪙💰💲 👩🏽‍💻👨🏼‍💻💻🖱️⌨️
 
-TAREFA 1 — Ortografia e gramática
-Se houver legenda de texto fornecida (campo "Legenda" no final deste prompt, não vazio), revise-a em português (PT-BR) e liste erros de ortografia, acentuação ou gramática. Além disso, se a própria imagem tiver algum texto visível nela (ex: card, print de tela, texto sobreposto, placa), transcreva mentalmente esse texto e revise erros nele também, tratando como parte do mesmo conteúdo.
-Para CADA erro, marque de onde ele veio no campo "origem": "legenda" se o erro está no texto da legenda, ou "imagem" se o erro está em texto visível na própria imagem (não na legenda). Isso é importante pro usuário saber onde exatamente precisa corrigir.
-Gere também "textoCorrigido": a legenda original com só essas correções aplicadas (mesma mensagem, tom e estrutura, só sem os erros) — atenção: "textoCorrigido" NUNCA inclui correções de erros que estão na imagem (origem "imagem"), só das que estão na legenda (origem "legenda"), já que não dá pra reescrever texto que está dentro de uma arte. Se NÃO houver legenda nenhuma e nenhum texto visível na imagem, devolva "temErros": false, "erros": [] e "textoCorrigido": "" (string vazia).
+TAREFA 1 — Ortografia e gramática (só da LEGENDA, não da imagem)
+Se houver legenda de texto fornecida (campo "Legenda" no final deste prompt, não vazio), revise-a em português (PT-BR) e liste erros de ortografia, acentuação ou gramática. Essa tarefa é APENAS sobre a legenda — NÃO inclua aqui nenhum erro de texto que esteja dentro da própria imagem (isso vai na Tarefa 5, separado, pra não confundir o usuário sobre onde corrigir cada coisa).
+Gere também "textoCorrigido": a legenda original com só essas correções aplicadas (mesma mensagem, tom e estrutura, só sem os erros). Se NÃO houver legenda nenhuma, devolva "temErros": false, "erros": [] e "textoCorrigido": "" (string vazia).
 
 TAREFA 2 — Índice de engajamento (0-100)
 Se houver legenda de texto fornecida (não vazia): calcule a nota com estes 4 critérios de TEXTO (25% cada) — os mesmos usados pra posts só de texto:
@@ -246,14 +245,19 @@ Preferências do usuário sobre emojis e hashtags (valem tanto pra reescrita qua
 - Hashtags — "sim": inclua 2-5 hashtags relevantes (institucionais quando fizer sentido) no final. "não": ZERO hashtags, mesmo que emojis estejam "sim".
 
 TAREFA 4 — Análise da imagem (pra mostrar ao usuário que a imagem foi realmente vista)
-Escreva um resumo curto (1-3 frases) descrevendo o que aparece na imagem (elementos, cores, texto visível, pessoas, gráficos etc.) e, se houver legenda, como a imagem e a legenda se conectam (ou não se conectam — aponte isso se for o caso, já que desalinhamento entre imagem e legenda prejudica o engajamento). Isso é o que vai no campo "analiseImagem".
+Escreva um resumo curto (1-3 frases) descrevendo o que aparece na imagem (elementos, cores, pessoas, gráficos etc.) e, se houver legenda, como a imagem e a legenda se conectam (ou não se conectam — aponte isso se for o caso, já que desalinhamento entre imagem e legenda prejudica o engajamento). Isso vai no campo "analiseImagem.resumo".
+
+TAREFA 5 — Ortografia do texto DENTRO da imagem (separado da Tarefa 1, que é só a legenda)
+Se a própria imagem tiver algum texto visível nela (ex: card, print de tela, texto sobreposto, placa, capa de livro etc.), transcreva mentalmente esse texto e revise erros de ortografia, acentuação ou gramática nele. Isso é INDEPENDENTE da Tarefa 1 — nunca misture erro de texto da imagem com erro de texto da legenda.
+Se fizer sentido (o texto tem erro, ou está fraco/poderia ser melhor), escreva em "sugestaoTexto" uma versão sugerida melhor pra esse texto da imagem — isso é só uma sugestão pra quem for editar a arte depois, não corrige a imagem de verdade. Se não fizer sentido sugerir nada (texto já está bom, ou não há texto na imagem), devolva "sugestaoTexto": null.
+Se NÃO houver texto nenhum visível na imagem, devolva "temErros": false, "erros": [] e "sugestaoTexto": null. Isso tudo vai dentro de "analiseImagem.ortografia".
 
 Responda SEMPRE neste formato JSON exato:
 
 {
   "ortografia": {
     "temErros": boolean,
-    "erros": [{ "trecho": string, "sugestao": string, "tipo": "ortografia" | "gramatica" | "acentuacao", "origem": "legenda" | "imagem" }],
+    "erros": [{ "trecho": string, "sugestao": string, "tipo": "ortografia" | "gramatica" | "acentuacao" }],
     "textoCorrigido": string
   },
   "engajamento": {
@@ -267,7 +271,12 @@ Responda SEMPRE neste formato JSON exato:
     "motivo": string
   },
   "analiseImagem": {
-    "resumo": string
+    "resumo": string,
+    "ortografia": {
+      "temErros": boolean,
+      "erros": [{ "trecho": string, "sugestao": string, "tipo": "ortografia" | "gramatica" | "acentuacao" }],
+      "sugestaoTexto": string | null
+    }
   }
 }
 
