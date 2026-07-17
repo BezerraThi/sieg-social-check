@@ -34,9 +34,16 @@ function App() {
     }
   }
 
+  // Botão "Editar texto" (tela de erro) — mantém o texto pra corrigir e tentar de novo.
+  function handleEditarTexto() {
+    setErro('')
+    setStatus('form')
+  }
+
+  // Botão "Analisar outro texto" (tela de resultado) — começa do zero, de propósito.
   function handleNovaAnalise() {
     setResultado(null)
-    setErro('')
+    setTexto('')
     setStatus('form')
   }
 
@@ -103,7 +110,7 @@ function App() {
               <button type="button" style={primaryButtonStyle} onClick={handleSubmit}>
                 Tentar de novo
               </button>
-              <button type="button" style={secondaryButtonStyle} onClick={handleNovaAnalise}>
+              <button type="button" style={secondaryButtonStyle} onClick={handleEditarTexto}>
                 Editar texto
               </button>
             </div>
