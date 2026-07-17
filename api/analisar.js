@@ -1,10 +1,7 @@
 // Função serverless da Vercel — roda só no servidor, nunca é enviada ao navegador.
 // A URL real do webhook do n8n (e o segredo, se configurado) ficam só aqui.
-
-// A análise de IA pode levar mais que os 10s padrão — pede até 60s (dentro do limite do plano Hobby).
-export const config = {
-  maxDuration: 60,
-}
+// O tempo máximo de execução (maxDuration) é configurado no vercel.json, não aqui —
+// esse export "config" só funciona em projetos Next.js.
 
 export default async function handler(req, res) {
   try {
