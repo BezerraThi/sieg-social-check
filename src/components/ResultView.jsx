@@ -33,7 +33,7 @@ const cardStyle = {
   textAlign: 'left',
 }
 
-export default function ResultView({ resultado, onNovaAnalise }) {
+export default function ResultView({ resultado, textoOriginalVazio, onNovaAnalise }) {
   const { ortografia, engajamento, textoAlternativo } = resultado
   const corNota = ESCALA_CLASSIFICACAO[engajamento.classificacao] || 'var(--azul)'
 
@@ -41,7 +41,7 @@ export default function ResultView({ resultado, onNovaAnalise }) {
     <div>
       <SecaoOrtografia ortografia={ortografia} />
       <SecaoEngajamento engajamento={engajamento} cor={corNota} />
-      <SecaoTextoAlternativo textoAlternativo={textoAlternativo} />
+      <SecaoTextoAlternativo textoAlternativo={textoAlternativo} ehLegendaNova={textoOriginalVazio} />
 
       <div style={{ textAlign: 'center', marginTop: 8 }}>
         <button type="button" style={secondaryButtonStyle} onClick={onNovaAnalise}>
@@ -233,7 +233,7 @@ function SecaoEngajamento({ engajamento, cor }) {
   )
 }
 
-function SecaoTextoAlternativo({ textoAlternativo }) {
+function SecaoTextoAlternativo({ textoAlternativo, ehLegendaNova }) {
   const [copiado, setCopiado] = useState(false)
 
   async function handleCopiar() {
@@ -248,7 +248,9 @@ function SecaoTextoAlternativo({ textoAlternativo }) {
 
   return (
     <section style={cardStyle}>
-      <h3 style={{ fontSize: 17, marginBottom: 14 }}>Sugestão de texto alternativo</h3>
+      <h3 style={{ fontSize: 17, marginBottom: 14 }}>
+        {ehLegendaNova ? 'Sugestão de legenda para a imagem' : 'Sugestão de texto alternativo'}
+      </h3>
       <p style={{ fontSize: 15, whiteSpace: 'pre-wrap', background: 'var(--off-white)', borderRadius: 12, padding: 16, color: 'var(--carvao)' }}>
         {textoAlternativo.sugestao}
       </p>

@@ -16,16 +16,18 @@ function App() {
   const [rede, setRede] = useState(REDES[0].valor)
   const [incluirEmojis, setIncluirEmojis] = useState(true)
   const [incluirHashtags, setIncluirHashtags] = useState(true)
+  const [imagem, setImagem] = useState(null) // data URL (base64) da imagem escolhida, ou null
+  const [erroImagem, setErroImagem] = useState('')
 
   async function handleSubmit(e) {
     e?.preventDefault()
     const textoLimpo = texto.trim()
-    if (!textoLimpo) return
+    if (!textoLimpo && !imagem) return
 
     setStatus('carregando')
     setErro('')
     try {
-      const dados = await analisarTexto({ texto: textoLimpo, rede, incluirEmojis, incluirHashtags })
+      const dados = await analisarTexto({ texto: textoLimpo, rede, incluirEmojis, incluirHashtags, imagem })
       setResultado(dados)
       setStatus('resultado')
     } catch (err) {
@@ -44,6 +46,8 @@ function App() {
   function handleNovaAnalise() {
     setResultado(null)
     setTexto('')
+    setImagem(null)
+    setErroImagem('')
     setStatus('form')
   }
 
@@ -69,7 +73,7 @@ function App() {
         </span>
         <h1 style={{ fontSize: 34, marginBottom: 10 }}>Revisor de posts</h1>
         <p style={{ color: 'var(--cinza-medio)', fontSize: 15, maxWidth: 420, margin: '0 auto' }}>
-          Cole o texto do post antes de publicar: a IA revisa ortografia, estima o engajamento e sugere uma versão alternativa.
+          Envie o texto, a imagem do post, ou os dois: a IA revisa ortografia, estima o engajamento e sugere uma versão alternativa.
         </p>
       </header>
 
@@ -84,6 +88,10 @@ function App() {
             setIncluirEmojis={setIncluirEmojis}
             incluirHashtags={incluirHashtags}
             setIncluirHashtags={setIncluirHashtags}
+            imagem={imagem}
+            setImagem={setImagem}
+            erroImagem={erroImagem}
+            setErroImagem={setErroImagem}
             onSubmit={handleSubmit}
           />
         )}
@@ -118,7 +126,7 @@ function App() {
         )}
 
         {status === 'resultado' && resultado && (
-          <ResultView resultado={resultado} onNovaAnalise={handleNovaAnalise} />
+          <ResultView resultado={resultado} textoOriginalVazio={!texto.trim()} onNovaAnalise={handleNovaAnalise} />
         )}
       </main>
 

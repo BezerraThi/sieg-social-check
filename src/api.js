@@ -6,13 +6,13 @@ function esperar(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
-async function chamarApi({ texto, rede, incluirEmojis, incluirHashtags }) {
+async function chamarApi({ texto, rede, incluirEmojis, incluirHashtags, imagem }) {
   let response
   try {
     response = await fetch('/api/analisar', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ texto, rede, incluirEmojis, incluirHashtags }),
+      body: JSON.stringify({ texto, rede, incluirEmojis, incluirHashtags, imagem }),
     })
   } catch {
     throw new AnaliseError('Não foi possível conectar ao serviço de análise. Tente novamente.')
