@@ -244,6 +244,9 @@ Preferências do usuário sobre emojis e hashtags (valem tanto pra reescrita qua
 - Emojis — "sim": pode usar emojis da lista aprovada quando fizer sentido. "não": ZERO emojis, mesmo que hashtags estejam "sim".
 - Hashtags — "sim": inclua 2-5 hashtags relevantes (institucionais quando fizer sentido) no final. "não": ZERO hashtags, mesmo que emojis estejam "sim".
 
+TAREFA 4 — Análise da imagem (pra mostrar ao usuário que a imagem foi realmente vista)
+Escreva um resumo curto (1-3 frases) descrevendo o que aparece na imagem (elementos, cores, texto visível, pessoas, gráficos etc.) e, se houver legenda, como a imagem e a legenda se conectam (ou não se conectam — aponte isso se for o caso, já que desalinhamento entre imagem e legenda prejudica o engajamento). Isso é o que vai no campo "analiseImagem".
+
 Responda SEMPRE neste formato JSON exato:
 
 {
@@ -261,6 +264,9 @@ Responda SEMPRE neste formato JSON exato:
   "textoAlternativo": {
     "sugestao": string,
     "motivo": string
+  },
+  "analiseImagem": {
+    "resumo": string
   }
 }
 

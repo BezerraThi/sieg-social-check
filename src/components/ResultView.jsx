@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { CheckCircle, WarningCircle, Copy, Check, TextAa, Heart, Eye, DeviceMobile, ChartBar } from '@phosphor-icons/react'
+import { CheckCircle, WarningCircle, Copy, Check, TextAa, Heart, Eye, DeviceMobile, ChartBar, Image as ImageIcon } from '@phosphor-icons/react'
 import { secondaryButtonStyle } from '../App'
 
 const ESCALA_CLASSIFICACAO = {
@@ -33,12 +33,13 @@ const cardStyle = {
   textAlign: 'left',
 }
 
-export default function ResultView({ resultado, textoOriginalVazio, onNovaAnalise }) {
-  const { ortografia, engajamento, textoAlternativo } = resultado
+export default function ResultView({ resultado, textoOriginalVazio, imagemEnviada, onNovaAnalise }) {
+  const { ortografia, engajamento, textoAlternativo, analiseImagem } = resultado
   const corNota = ESCALA_CLASSIFICACAO[engajamento.classificacao] || 'var(--azul)'
 
   return (
     <div>
+      {imagemEnviada && <SecaoImagemAnalisada imagem={imagemEnviada} analiseImagem={analiseImagem} />}
       <SecaoOrtografia ortografia={ortografia} />
       <SecaoEngajamento engajamento={engajamento} cor={corNota} />
       <SecaoTextoAlternativo textoAlternativo={textoAlternativo} ehLegendaNova={textoOriginalVazio} />
@@ -49,6 +50,27 @@ export default function ResultView({ resultado, textoOriginalVazio, onNovaAnalis
         </button>
       </div>
     </div>
+  )
+}
+
+function SecaoImagemAnalisada({ imagem, analiseImagem }) {
+  return (
+    <section style={cardStyle}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+        <ImageIcon size={22} weight="fill" color="var(--azul)" />
+        <h3 style={{ fontSize: 17 }}>Imagem analisada</h3>
+      </div>
+      <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
+        <img
+          src={imagem}
+          alt="Imagem enviada para análise"
+          style={{ width: 96, height: 96, objectFit: 'cover', borderRadius: 12, border: '1px solid var(--cinza-claro)', flexShrink: 0 }}
+        />
+        <p style={{ fontSize: 14, color: 'var(--carvao)', margin: 0 }}>
+          {analiseImagem?.resumo || 'A IA levou o conteúdo dessa imagem em conta na análise de engajamento e na sugestão acima.'}
+        </p>
+      </div>
+    </section>
   )
 }
 

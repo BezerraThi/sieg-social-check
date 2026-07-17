@@ -126,7 +126,12 @@ function App() {
         )}
 
         {status === 'resultado' && resultado && (
-          <ResultView resultado={resultado} textoOriginalVazio={!texto.trim()} onNovaAnalise={handleNovaAnalise} />
+          <ResultView
+            resultado={resultado}
+            textoOriginalVazio={!texto.trim()}
+            imagemEnviada={imagem}
+            onNovaAnalise={handleNovaAnalise}
+          />
         )}
       </main>
 

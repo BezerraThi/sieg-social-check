@@ -67,6 +67,9 @@ O navegador faz um `POST` pra `/api/analisar` (função serverless da Vercel, ve
   "textoAlternativo": {
     "sugestao": "Versão reescrita do texto, mais direta e com mais apelo",
     "motivo": "Por que essa versão tende a performar melhor"
+  },
+  "analiseImagem": {
+    "resumo": "Descrição curta do que a IA viu na imagem e como ela se conecta com a legenda"
   }
 }
 ```
@@ -76,6 +79,7 @@ O navegador faz um `POST` pra `/api/analisar` (função serverless da Vercel, ve
 - `ortografia.textoCorrigido`: sempre presente, mesmo quando `temErros` é `false` (nesse caso, é igual ao texto original) — é o texto pronto pra copiar, com a mensagem e o tom preservados, só sem erros. Quando a requisição é só imagem (sem `texto` e sem texto visível na imagem), vem como string vazia `""` — o site não mostra essa seção nesse caso.
 - `engajamento.nota` e cada `criterios[].nota`: inteiro de 0 a 100.
 - `engajamento.classificacao`: um destes — `Baixo`, `Médio`, `Bom`, `Ótimo`.
+- `analiseImagem`: **só existe quando a requisição incluiu uma imagem** (o caminho de texto puro não devolve esse campo — o site trata a ausência dele normalmente, mostrando uma frase genérica no lugar). É o jeito da IA mostrar pro usuário que ela realmente "olhou" pra imagem, não só pro texto.
 - Todos os campos de texto em português.
 
 ### Comportamento por combinação de entrada
