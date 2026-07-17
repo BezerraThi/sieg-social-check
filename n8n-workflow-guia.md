@@ -243,7 +243,7 @@ Se NÃO houver legenda (é uma imagem pura, sem texto associado): calcule a nota
 Para cada critério, devolva a nota e um comentário curto explicando o porquê. No campo "resumo", explique em 1-2 frases o principal ponto de melhoria.
 
 TAREFA 4 — Texto alternativo / legenda sugerida
-Se houver legenda de texto fornecida (não vazia): reescreva-a mantendo a mensagem, mas otimizando os critérios da Tarefa 2 e seguindo o tom de voz da SIEG e o tom da rede escolhida. Explique em "motivo" por que a versão nova tende a performar melhor.
+Se houver legenda de texto fornecida (não vazia): reescreva-a mantendo a mensagem, mas otimizando os critérios da Tarefa 3 e seguindo o tom de voz da SIEG e o tom da rede escolhida. Explique em "motivo" por que a versão nova tende a performar melhor.
 Se NÃO houver legenda: crie do zero uma sugestão de legenda pra acompanhar essa imagem, baseada no que a imagem mostra, conectando com o contexto do negócio e o público-alvo descritos acima, seguindo o tom de voz da SIEG e o tom específico da rede escolhida. Em "motivo", explique por que essa legenda combina bem com a imagem e tende a performar bem.
 
 Preferências do usuário sobre emojis e hashtags (valem tanto pra reescrita quanto pra legenda nova): são DUAS decisões INDEPENDENTES uma da outra. NUNCA use uma como pista pra decidir a outra.
