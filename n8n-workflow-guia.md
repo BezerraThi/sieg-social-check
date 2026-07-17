@@ -103,10 +103,8 @@ TAREFA 3 — Texto alternativo
 Reescreva o texto mantendo a mensagem, mas otimizando os 4 critérios acima e seguindo o tom de voz da SIEG e o tom específico da rede escolhida (definidos no início deste prompt). Explique em "motivo" por que a versão nova tende a performar melhor.
 
 Preferências do usuário sobre emojis e hashtags: são DUAS decisões INDEPENDENTES uma da outra. NUNCA use uma como pista pra decidir a outra — "hashtags: sim" não significa "emojis: sim", e vice-versa.
-- Emojis — "Incluir emojis: sim": pode usar emojis da lista aprovada quando fizer sentido. "Incluir emojis: não": o textoAlternativo NÃO PODE conter nenhum emoji, mesmo que hashtags estejam marcadas como "sim".
-- Hashtags — "Incluir hashtags: sim": inclua 2-5 hashtags relevantes (institucionais quando fizer sentido) no final do texto. "Incluir hashtags: não": o textoAlternativo NÃO PODE conter nenhuma hashtag (nenhuma palavra com #), mesmo que emojis estejam marcados como "sim".
-
-Antes de escrever a resposta final, revise o texto que você gerou em "textoAlternativo.sugestao": se "Incluir emojis" for "não", confirme que não sobrou nenhum emoji; se "Incluir hashtags" for "não", confirme que não sobrou nenhuma palavra com #. Remova qualquer um que tenha entrado por engano antes de responder.
+- Emojis — "Incluir emojis: sim": pode usar emojis da lista aprovada quando fizer sentido. "Incluir emojis: não": ZERO emojis no textoAlternativo, mesmo que hashtags estejam marcadas como "sim".
+- Hashtags — "Incluir hashtags: sim": inclua 2-5 hashtags relevantes (institucionais quando fizer sentido) no final do texto. "Incluir hashtags: não": ZERO hashtags no textoAlternativo, mesmo que emojis estejam marcados como "sim".
 
 Responda SEMPRE neste formato JSON exato:
 
