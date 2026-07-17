@@ -1,6 +1,12 @@
 export class AnaliseError extends Error {}
 
-export async function analisarTexto({ texto, rede, incluirEmojis, incluirHashtags }) {
+const MAX_TENTATIVAS = 3
+
+function esperar(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
+async function chamarApi({ texto, rede, incluirEmojis, incluirHashtags }) {
   let response
   try {
     response = await fetch('/api/analisar', {
@@ -28,4 +34,20 @@ export async function analisarTexto({ texto, rede, incluirEmojis, incluirHashtag
   }
 
   return dados
+}
+
+// A Vercel tem uma falha intermitente conhecida na infraestrutura dela (não é bug nosso)
+// que às vezes derruba a função sem nem chegar a chamar o n8n. Como costuma passar sozinha
+// na tentativa seguinte, tentamos de novo automaticamente antes de mostrar erro pro usuário.
+export async function analisarTexto(params) {
+  let ultimoErro
+  for (let tentativa = 1; tentativa <= MAX_TENTATIVAS; tentativa++) {
+    try {
+      return await chamarApi(params)
+    } catch (err) {
+      ultimoErro = err
+      if (tentativa < MAX_TENTATIVAS) await esperar(800 * tentativa)
+    }
+  }
+  throw ultimoErro
 }
