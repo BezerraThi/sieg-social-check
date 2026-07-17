@@ -40,7 +40,7 @@ export default function ResultView({ resultado, textoOriginalVazio, imagemEnviad
   return (
     <div>
       {imagemEnviada && <SecaoImagemAnalisada imagem={imagemEnviada} analiseImagem={analiseImagem} />}
-      <SecaoOrtografia ortografia={ortografia} />
+      <SecaoOrtografia ortografia={ortografia} imagemEnviada={!!imagemEnviada} />
       <SecaoEngajamento engajamento={engajamento} cor={corNota} />
       <SecaoTextoAlternativo textoAlternativo={textoAlternativo} ehLegendaNova={textoOriginalVazio} />
 
@@ -74,8 +74,9 @@ function SecaoImagemAnalisada({ imagem, analiseImagem }) {
   )
 }
 
-function SecaoOrtografia({ ortografia }) {
+function SecaoOrtografia({ ortografia, imagemEnviada }) {
   const semErros = !ortografia.temErros || ortografia.erros.length === 0
+  const temErroNaImagem = imagemEnviada && ortografia.erros.some((erro) => erro.origem === 'imagem')
 
   return (
     <section style={cardStyle}>
@@ -92,16 +93,40 @@ function SecaoOrtografia({ ortografia }) {
         <p style={{ color: 'var(--cinza-medio)', fontSize: 14, marginLeft: 32 }}>Nenhum erro encontrado.</p>
       ) : (
         <>
-          <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 10, marginBottom: ortografia.textoCorrigido ? 20 : 0 }}>
+          <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 12 }}>
             {ortografia.erros.map((erro, i) => (
               <li key={i} style={{ fontSize: 14, background: 'var(--off-white)', borderRadius: 10, padding: '10px 14px' }}>
-                <span style={{ textDecoration: 'line-through', color: 'var(--erro)', fontWeight: 600 }}>{erro.trecho}</span>
-                {' → '}
-                <span style={{ color: 'var(--carvao)', fontWeight: 700 }}>{erro.sugestao}</span>
-                <span style={{ color: 'var(--cinza-medio)' }}> ({erro.tipo})</span>
+                {imagemEnviada && (
+                  <span
+                    style={{
+                      display: 'inline-block',
+                      fontSize: 11,
+                      fontWeight: 700,
+                      padding: '2px 9px',
+                      borderRadius: 'var(--pill-radius)',
+                      marginBottom: 6,
+                      background: erro.origem === 'imagem' ? 'var(--periwinkle)' : 'var(--azul)',
+                      color: 'white',
+                    }}
+                  >
+                    {erro.origem === 'imagem' ? 'Na imagem' : 'Na legenda'}
+                  </span>
+                )}
+                <div>
+                  <span style={{ textDecoration: 'line-through', color: 'var(--erro)', fontWeight: 600 }}>{erro.trecho}</span>
+                  {' → '}
+                  <span style={{ color: 'var(--carvao)', fontWeight: 700 }}>{erro.sugestao}</span>
+                  <span style={{ color: 'var(--cinza-medio)' }}> ({erro.tipo})</span>
+                </div>
               </li>
             ))}
           </ul>
+
+          {temErroNaImagem && (
+            <p style={{ fontSize: 12.5, color: 'var(--cinza-medio)', marginBottom: ortografia.textoCorrigido ? 20 : 0 }}>
+              Os erros marcados "Na imagem" estão na própria arte, não na legenda — corrija direto na imagem (o texto corrigido abaixo, se houver, contém só a legenda).
+            </p>
+          )}
 
           {ortografia.textoCorrigido && <TextoCorrigido texto={ortografia.textoCorrigido} />}
         </>

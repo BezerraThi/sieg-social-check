@@ -219,7 +219,8 @@ Emojis aprovados (use com moderação, só se combinar com o tom da rede): 😀�
 
 TAREFA 1 — Ortografia e gramática
 Se houver legenda de texto fornecida (campo "Legenda" no final deste prompt, não vazio), revise-a em português (PT-BR) e liste erros de ortografia, acentuação ou gramática. Além disso, se a própria imagem tiver algum texto visível nela (ex: card, print de tela, texto sobreposto, placa), transcreva mentalmente esse texto e revise erros nele também, tratando como parte do mesmo conteúdo.
-Gere também "textoCorrigido": a legenda original com só essas correções aplicadas (mesma mensagem, tom e estrutura, só sem os erros). Se NÃO houver legenda nenhuma e nenhum texto visível na imagem, devolva "temErros": false, "erros": [] e "textoCorrigido": "" (string vazia).
+Para CADA erro, marque de onde ele veio no campo "origem": "legenda" se o erro está no texto da legenda, ou "imagem" se o erro está em texto visível na própria imagem (não na legenda). Isso é importante pro usuário saber onde exatamente precisa corrigir.
+Gere também "textoCorrigido": a legenda original com só essas correções aplicadas (mesma mensagem, tom e estrutura, só sem os erros) — atenção: "textoCorrigido" NUNCA inclui correções de erros que estão na imagem (origem "imagem"), só das que estão na legenda (origem "legenda"), já que não dá pra reescrever texto que está dentro de uma arte. Se NÃO houver legenda nenhuma e nenhum texto visível na imagem, devolva "temErros": false, "erros": [] e "textoCorrigido": "" (string vazia).
 
 TAREFA 2 — Índice de engajamento (0-100)
 Se houver legenda de texto fornecida (não vazia): calcule a nota com estes 4 critérios de TEXTO (25% cada) — os mesmos usados pra posts só de texto:
@@ -252,7 +253,7 @@ Responda SEMPRE neste formato JSON exato:
 {
   "ortografia": {
     "temErros": boolean,
-    "erros": [{ "trecho": string, "sugestao": string, "tipo": "ortografia" | "gramatica" | "acentuacao" }],
+    "erros": [{ "trecho": string, "sugestao": string, "tipo": "ortografia" | "gramatica" | "acentuacao", "origem": "legenda" | "imagem" }],
     "textoCorrigido": string
   },
   "engajamento": {

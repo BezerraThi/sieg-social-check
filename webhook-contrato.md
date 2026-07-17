@@ -32,7 +32,8 @@ O navegador faz um `POST` pra `/api/analisar` (função serverless da Vercel, ve
       {
         "trecho": "empresa preucupada",
         "sugestao": "empresa preocupada",
-        "tipo": "ortografia"
+        "tipo": "ortografia",
+        "origem": "legenda"
       }
     ],
     "textoCorrigido": "Texto original com só as correções de ortografia/gramática aplicadas — mesma mensagem, mesmo tom, só sem os erros"
@@ -80,6 +81,7 @@ O navegador faz um `POST` pra `/api/analisar` (função serverless da Vercel, ve
 - `engajamento.nota` e cada `criterios[].nota`: inteiro de 0 a 100.
 - `engajamento.classificacao`: um destes — `Baixo`, `Médio`, `Bom`, `Ótimo`.
 - `analiseImagem`: **só existe quando a requisição incluiu uma imagem** (o caminho de texto puro não devolve esse campo — o site trata a ausência dele normalmente, mostrando uma frase genérica no lugar). É o jeito da IA mostrar pro usuário que ela realmente "olhou" pra imagem, não só pro texto.
+- `ortografia.erros[].origem`: `"legenda"` ou `"imagem"` — só vem preenchido quando a requisição incluiu uma imagem (o caminho de texto puro não marca origem, já que só existe uma fonte possível). O site usa isso pra mostrar uma etiqueta em cada erro ("Na legenda" / "Na imagem"), porque `textoCorrigido` só corrige erros de origem `"legenda"` (não dá pra reescrever texto que está dentro de uma arte/imagem).
 - Todos os campos de texto em português.
 
 ### Comportamento por combinação de entrada
